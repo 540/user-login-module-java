@@ -1,5 +1,7 @@
 package Infrastructure;
 
+import Domain.User;
+
 public class FacebookSessionManager {
     public boolean login(String userName, String password)
     {
@@ -11,5 +13,8 @@ public class FacebookSessionManager {
     {
         //Imaginad que esto en realidad realiza una llamada al API de Facebook
         return (int) (Math.random() * 100);
+    }
+
+    public void logout(User user){
     }
 }

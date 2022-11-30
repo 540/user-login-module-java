@@ -4,9 +4,9 @@ import Appplication.UserLoginService;
 import Domain.User;
 import com.deg540.tdd.Doubles.DummyFacebookSessionManager;
 import com.deg540.tdd.Doubles.FakeFacebookSessionManager;
+import com.deg540.tdd.Doubles.SpyFacebookSessionManager;
 import com.deg540.tdd.Doubles.StubFacebookSessionManager;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -84,5 +84,32 @@ public class UserLoginServiceTest {
 
         assertEquals(UserLoginService.MENSAJE_LOGIN_CORRECTO, userNotLoggedInMessage);
         assertEquals(expectedLoggedUsers.get(0).getUserName(), userLoginService.getLoggedUsers().get(0).getUserName());
+    }
+
+    @Test
+    void notLoggedInUserIsNotLoggedOutFromFacebook() throws Exception {
+        SpyFacebookSessionManager spyFacebookSessionManager = new SpyFacebookSessionManager();
+        userLoginService = new UserLoginService(spyFacebookSessionManager);
+        User user = new User("validUserName");
+
+        String logoutResponse = userLoginService.logout(user);
+
+        assertEquals("User not found", logoutResponse);
+        assertEquals(0, spyFacebookSessionManager.logoutCalledTimes());
+        assertEquals(new ArrayList<>(), userLoginService.getLoggedUsers());
+    }
+
+    @Test
+    void loggedInUserIsLoggedOutFromFacebook() throws Exception {
+        SpyFacebookSessionManager spyFacebookSessionManager = new SpyFacebookSessionManager();
+        userLoginService = new UserLoginService(spyFacebookSessionManager);
+        User user = new User("validUserName");
+        userLoginService.manualLogin(user);
+
+        String logoutResponse = userLoginService.logout(user);
+
+        assertEquals("OK", logoutResponse);
+        assertEquals(1, spyFacebookSessionManager.logoutCalledTimes());
+        assertEquals(new ArrayList<>(), userLoginService.getLoggedUsers());
     }
 }

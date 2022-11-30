@@ -40,4 +40,15 @@ public class UserLoginService {
         loggedUsers.add(new User(userName));
         return MENSAJE_LOGIN_CORRECTO;
     }
+
+    public String logout(User user){
+        if (loggedUsers.contains(user)){
+            loggedUsers.remove(user);
+            facebookSessionManager.logout(user);
+
+            return "OK";
+        }
+
+        return "User not found";
+    }
 }
