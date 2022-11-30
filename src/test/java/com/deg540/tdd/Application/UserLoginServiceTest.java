@@ -3,6 +3,7 @@ package com.deg540.tdd.Application;
 import Appplication.UserLoginService;
 import Domain.User;
 import com.deg540.tdd.Doubles.DummyFacebookSessionManager;
+import com.deg540.tdd.Doubles.FakeFacebookSessionManager;
 import com.deg540.tdd.Doubles.StubFacebookSessionManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,7 @@ public class UserLoginServiceTest {
 
     @Test
     void userIsLoggedIn() throws Exception {
-        User user = new User();
+        User user = new User("validUserName");
         userLoginService = new UserLoginService(new DummyFacebookSessionManager());
         List<User> expectedLoggedUsers = new ArrayList<>();
         expectedLoggedUsers.add(user);
@@ -30,7 +31,7 @@ public class UserLoginServiceTest {
 
     @Test
     void userIsNotLoggedInIfAlreadyLogged() throws Exception {
-        User user = new User();
+        User user = new User("validUserName");
         userLoginService = new UserLoginService(new DummyFacebookSessionManager());
 
         userLoginService.manualLogin(user);
@@ -41,7 +42,7 @@ public class UserLoginServiceTest {
 
     @Test
     void getsLoggedUsers() throws Exception {
-        User user = new User();
+        User user = new User("validUserName");
         userLoginService = new UserLoginService(new DummyFacebookSessionManager());
         userLoginService.manualLogin(user);
 
@@ -60,5 +61,28 @@ public class UserLoginServiceTest {
         int totalExternallyLoggedUsers = userLoginService.getExternalSessions();
 
         assertEquals(1, totalExternallyLoggedUsers);
+    }
+
+    @Test
+    void userNotLoggedInInFacebook() {
+        userLoginService = new UserLoginService(new FakeFacebookSessionManager());
+
+        String userNotLoggedInMessage = userLoginService.login("invalidUserName", "invalidPassword");
+
+        assertEquals(UserLoginService.MENSAJE_LOGIN_INCORRECTO, userNotLoggedInMessage);
+        assertEquals(new ArrayList<>(), userLoginService.getLoggedUsers());
+    }
+
+    @Test
+    void userLoggedInInFacebook() {
+        userLoginService = new UserLoginService(new FakeFacebookSessionManager());
+        User user = new User("validUserName");
+        List<User> expectedLoggedUsers = new ArrayList<>();
+        expectedLoggedUsers.add(user);
+
+        String userNotLoggedInMessage = userLoginService.login("validUserName", "validPassword");
+
+        assertEquals(UserLoginService.MENSAJE_LOGIN_CORRECTO, userNotLoggedInMessage);
+        assertEquals(expectedLoggedUsers.get(0).getUserName(), userLoginService.getLoggedUsers().get(0).getUserName());
     }
 }

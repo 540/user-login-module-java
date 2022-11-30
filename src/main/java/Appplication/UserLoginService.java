@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserLoginService {
+    public static final String MENSAJE_LOGIN_INCORRECTO = "Login incorrecto";
+    public static final String MENSAJE_LOGIN_CORRECTO = "Login correcto";
     private List<User> loggedUsers = new ArrayList<User>();
     private FacebookSessionManager facebookSessionManager;
 
@@ -28,5 +30,14 @@ public class UserLoginService {
 
     public int getExternalSessions() {
         return facebookSessionManager.getSessions();
+    }
+
+    public String login(String userName, String password) {
+        if(!facebookSessionManager.login(userName, password)){
+            return MENSAJE_LOGIN_INCORRECTO;
+        }
+
+        loggedUsers.add(new User(userName));
+        return MENSAJE_LOGIN_CORRECTO;
     }
 }
