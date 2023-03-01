@@ -1,4 +1,4 @@
-package Appplication;
+package Application;
 
 import Domain.User;
 

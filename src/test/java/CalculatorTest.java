@@ -1,5 +1,3 @@
-package com.deg540.tdd;
-
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
